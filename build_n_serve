@@ -1,4 +1,3 @@
 #!/bin/sh
 
-go build -o bin/pdfactory -v . && bin/pdfactory
-
+go build -o bin/kwik -v . && bin/kwik

@@ -13,6 +13,7 @@ import (
 func Router() *gin.Engine {
 	router := gin.Default()
 	router.LoadHTMLGlob("views/*")
+	router.Static("/assets", "./assets")
 
 	user := os.Getenv("USER")
 	password := os.Getenv("PASSWORD")
@@ -36,7 +37,7 @@ func Router() *gin.Engine {
 	})
 
 	// /:page display page
-	authorized.GET("/:page", func(c *gin.Context) {
+	authorized.GET("/docs/:page", func(c *gin.Context) {
 		page := c.Param("page")
 
 		filename := "pages/" + page + ".mw.html.md"
@@ -44,6 +45,7 @@ func Router() *gin.Engine {
 		body = github_flavored_markdown.Markdown(body)
 
 		c.HTML(http.StatusOK, "show.html", gin.H{
+			"title": template.HTML(page),
 			"body": template.HTML(body),
 		})
 	})

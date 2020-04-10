@@ -2,22 +2,21 @@
 <html>
 <head>
 <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
-<title>Creditspring</title>
+<title>{{ .title }}</title>
 <meta charset='UTF-8'>
-<!--link rel="stylesheet" media="all" href="/assets/main.self-d987bcdc53cc84cc3d3372151666ec5970aca45f741cbaa1e9f5eccdca1b5f7a.css?body=1" />
-<link rel="stylesheet" media="all" href="/assets/application.self-77e84e63ac16d773ce871b4494f297218511c288bbab821eaa3bb44e83293585.css?body=1" /-->
+<link rel="stylesheet" media="all" href="/assets/application.css" />
 </head>
 <body>
 <div class='navbar navbar-fixed-top'>
   <div class='navbar-inner'>
     <form action="/" accept-charset="UTF-8" method="get"><input name="utf8" type="hidden" value="&#x2713;" /><div class='container-fluid'>
-      <a class="brand" href="/Creditspring">Creditspring</a>
+      <a class="brand" href="/docs/{{ .title }}">{{ .title }}</a>
       <ul class='nav pull-right'>
       <li class='divider-vertical'></li>
       <li class='navbar-form'>
       <input type="text" name="terms" id="terms" accesskey="f" class="js-terms" title="Search or create a term [Ctrl+K]" />
-      <input type="submit" name="commit" value="Search" class="btn btn-primary" title="Searches for the term in existing pages" data-disable-with="Search" />
-      <input type="submit" name="commit" value="Create" id="create_btn" class="btn" title="Creates a page with the specified term, or leads to the page if already exists" data-disable-with="Create" />
+      <input type="submit" value="Search" class="btn btn-primary" title="Searches for the term in existing pages" data-disable-with="Search" />
+      <input type="submit" value="Create" formaction="" class="btn" title="Creates a page with the specified term, or leads to the page if already exists" data-disable-with="Create" />
       </li>
       </ul>
       </div>
