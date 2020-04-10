@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<title>Creditspring</title>
+<meta charset='UTF-8'>
+<!--link rel="stylesheet" media="all" href="/assets/main.self-d987bcdc53cc84cc3d3372151666ec5970aca45f741cbaa1e9f5eccdca1b5f7a.css?body=1" />
+<link rel="stylesheet" media="all" href="/assets/application.self-77e84e63ac16d773ce871b4494f297218511c288bbab821eaa3bb44e83293585.css?body=1" /-->
+</head>
+<body>
+<div class='navbar navbar-fixed-top'>
+  <div class='navbar-inner'>
+    <form action="/" accept-charset="UTF-8" method="get"><input name="utf8" type="hidden" value="&#x2713;" /><div class='container-fluid'>
+      <a class="brand" href="/Creditspring">Creditspring</a>
+      <ul class='nav pull-right'>
+      <li class='divider-vertical'></li>
+      <li class='navbar-form'>
+      <input type="text" name="terms" id="terms" accesskey="f" class="js-terms" title="Search or create a term [Ctrl+K]" />
+      <input type="submit" name="commit" value="Search" class="btn btn-primary" title="Searches for the term in existing pages" data-disable-with="Search" />
+      <input type="submit" name="commit" value="Create" id="create_btn" class="btn" title="Creates a page with the specified term, or leads to the page if already exists" data-disable-with="Create" />
+      </li>
+      </ul>
+      </div>
+    </form></div>
+</div>
+
+<div class='container-fluid'>
+  <div class='row-fluid'>
+    <div class='span3 js-sidepanel'>
+      <ul class='breadcrumb'>
+      <li>
+      <a accesskey="q" title="Back to main page of this wiki" href="/">« Main page</a>
+      <span class='divider'>/</span>
+      </li>
+      <li>
+      <a accesskey="q" title="Lists all pages this wiki has" href="/All">All pages</a>
+      </li>
+      </ul>
+
+      <div class='breadcrumb'>
+      <a class="btn btn-primary" accesskey="e" title="Changes this page to edition mode" href="/Creditspring/edit">Edit page</a>
+      </div>
+      <div class='toc breadcrumb js-toc'></div>
+    </div>
+    <div class='maincontent span9 pull-right js-maincontent'>
+      {{ .body }}
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+go build -o bin/pdfactory -v . && bin/pdfactory
+
