@@ -10,6 +10,12 @@ import (
 	"os"
 )
 
+type Page struct {
+	Title  string
+	Source string
+	Body   template.HTML
+}
+
 func Router() *gin.Engine {
 	router := gin.Default()
 	router.LoadHTMLGlob("views/*")
@@ -32,23 +38,44 @@ func Router() *gin.Engine {
 	}
 
 	// / root path
-	router.GET("/", func(c *gin.Context) {
+	authorized.GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "root")
 	})
 
 	// /:page display page
 	authorized.GET("/docs/:page", func(c *gin.Context) {
-		page := c.Param("page")
-
-		filename := "pages/" + page + ".mw.html.md"
-		body, _ := ioutil.ReadFile(filename)
-		body = github_flavored_markdown.Markdown(body)
-
+		page := loadPage(c)
 		c.HTML(http.StatusOK, "show.html", gin.H{
-			"title": template.HTML(page),
-			"body": template.HTML(body),
+			"title": page.Title,
+			"body":  page.Body,
+		})
+	})
+
+	// /:page/edit edit page
+	authorized.GET("/docs/:page/edit", func(c *gin.Context) {
+		page := loadPage(c)
+		c.HTML(http.StatusOK, "edit.html", gin.H{
+			"title":  page.Title,
+			"source": page.Source,
+			"body":   page.Body,
 		})
 	})
 
 	return router
+}
+
+func loadPage(c *gin.Context) Page {
+	title := c.Param("page")
+
+	source, err := ioutil.ReadFile("pages/" + title + ".mw.html.md")
+	if err != nil {
+		source = []byte("not found")
+	}
+
+	page := Page{
+		title,
+		string(source),
+		template.HTML(github_flavored_markdown.Markdown(source)),
+	}
+	return page
 }
