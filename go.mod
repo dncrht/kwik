@@ -3,6 +3,7 @@ module github.com/dncrht/kwik
 go 1.14
 
 require (
+	github.com/buaazp/fasthttprouter v0.1.1
 	github.com/gin-gonic/gin v1.6.2
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
 	github.com/opennota/check v0.0.0-20180911053232-0c771f5545ff // indirect
@@ -14,6 +15,7 @@ require (
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/sourcegraph/annotate v0.0.0-20160123013949-f4cad6c6324d // indirect
 	github.com/sourcegraph/syntaxhighlight v0.0.0-20170531221838-bd320f5d308e // indirect
+	github.com/valyala/fasthttp v1.9.0
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
 	mvdan.cc/unparam v0.0.0-20200314162735-0ac8026f7d06 // indirect
 )

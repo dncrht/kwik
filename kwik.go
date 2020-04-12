@@ -1,6 +1,9 @@
 package main
 
-import "os"
+import (
+	"github.com/valyala/fasthttp"
+	"os"
+)
 
 func main() {
 	port := os.Getenv("PORT")
@@ -8,5 +11,5 @@ func main() {
 		port = "5000"
 	}
 
-	Router().Run(":" + port)
+	fasthttp.ListenAndServe(":"+port, Router().Handler)
 }

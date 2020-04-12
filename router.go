@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"net/http"
-	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/buaazp/fasthttprouter"
 	"github.com/shurcooL/github_flavored_markdown"
+	"github.com/valyala/fasthttp"
 )
 
 type Page struct {
@@ -17,77 +16,67 @@ type Page struct {
 	Body   template.HTML
 }
 
-func Router() *gin.Engine {
-	router := gin.Default()
-	router.LoadHTMLGlob("views/*")
-	router.Static("/assets", "./assets")
-
-	user := os.Getenv("USER")
-	password := os.Getenv("PASSWORD")
-
-	var authorized *gin.RouterGroup
-	if user != "" && password != "" {
-		fmt.Println("* PROTECTED BY USER AND PASSWORD *")
-
-		authorized = router.Group("/", gin.BasicAuth(gin.Accounts{
-			user: password,
-		}))
-	} else {
-		fmt.Println("* OPEN ACCESS *")
-
-		authorized = router.Group("/")
-	}
+func Router() *fasthttprouter.Router {
+	router := fasthttprouter.New()
+	router.ServeFiles("/assets/*filepath", "assets")
 
 	// / root path
-	authorized.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "root")
+	router.GET("/", func(ctx *fasthttp.RequestCtx) {
+		fmt.Fprint(ctx, "root")
 	})
 
 	// /:page display page
-	authorized.GET("/docs/:page", func(c *gin.Context) {
-		page := loadPage(c)
-		c.HTML(http.StatusOK, "show.html", gin.H{
+	router.GET("/docs/:page", func(ctx *fasthttp.RequestCtx) {
+		title, _ := ctx.UserValue("page").(string)
+		page := loadPage(title)
+		t := template.Must(template.ParseFiles("views/layout.html", "views/show.html"))
+		t.Execute(ctx, map[string]interface{}{
 			"page": page,
 		})
+		ctx.SetContentType("text/html")
 	})
 
 	// /:page/edit edit page
-	authorized.GET("/docs/:page/edit", func(c *gin.Context) {
-		page := loadPage(c)
-		c.HTML(http.StatusOK, "edit.html", gin.H{
+	router.GET("/docs/:page/edit", func(ctx *fasthttp.RequestCtx) {
+		title, _ := ctx.UserValue("page").(string)
+		page := loadPage(title)
+		t := template.Must(template.ParseFiles("views/layout.html", "views/edit.html"))
+		t.Execute(ctx, map[string]interface{}{
 			"page": page,
 		})
+		ctx.SetContentType("text/html")
 	})
 
 	// /:page/edit edit page action
-	authorized.POST("/docs/:page/edit", func(c *gin.Context) {
-		title := c.Param("page")
-		source := c.PostForm("source")
+	router.POST("/docs/:page/edit", func(ctx *fasthttp.RequestCtx) {
+		title, _ := ctx.UserValue("page").(string)
+		source := ctx.FormValue("source")
 		ioutil.WriteFile("pages/"+title+".mw.html.md", []byte(source), 0644)
 
-		c.Redirect(http.StatusMovedPermanently, "/docs/"+title)
+		ctx.Redirect("/docs/"+title, fasthttp.StatusMovedPermanently)
 	})
 
 	// /:page/edit edit page action
-	authorized.POST("/docs/:page/preview", func(c *gin.Context) {
-		source := c.PostForm("source")
+	router.POST("/docs/:page/preview", func(ctx *fasthttp.RequestCtx) {
+		title, _ := ctx.UserValue("page").(string)
+		source := ctx.FormValue("source")
 		page := Page{
-			c.Param("page"),
-			source,
+			title,
+			string(source),
 			template.HTML(github_flavored_markdown.Markdown([]byte(source))),
 		}
 
-		c.HTML(http.StatusOK, "edit.html", gin.H{
+		t := template.Must(template.ParseFiles("views/layout.html", "views/edit.html"))
+		t.Execute(ctx, map[string]interface{}{
 			"page": page,
 		})
+		ctx.SetContentType("text/html")
 	})
 
 	return router
 }
 
-func loadPage(c *gin.Context) Page {
-	title := c.Param("page")
-
+func loadPage(title string) Page {
 	source, err := ioutil.ReadFile("pages/" + title + ".mw.html.md")
 	if err != nil {
 		source = []byte("not found")
