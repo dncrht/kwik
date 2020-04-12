@@ -42,7 +42,7 @@
           <div class='breadcrumb'>
             <div class='btn-group'>
               <input type="submit" value="Save" class="btn btn-primary btn-small js-save" accesskey="s" title="Saves changes to this page [Ctrl+S]" />
-              <input type="submit" value="Preview" class="btn btn-small" accesskey="p" title="Previews page changes instead of saving [Ctrl+P]" />
+              <input type="submit" value="Preview" formaction="/docs/{{ .title }}/preview" class="btn btn-small" accesskey="p" title="Previews page changes instead of saving [Ctrl+P]" />
               <a class="btn btn-small" title="Cancels page edition" href="/docs/{{ .title }}">Cancel</a>
             </div>
             <div class='pull-right'>
@@ -52,7 +52,7 @@
           <div class='toc breadcrumb js-toc'></div>
         </div>
         <div class='maincontent span9 pull-right js-maincontent'>
-          <textarea class="prettyprint" name="content" placeholder="Start here to write the page content." rows="25">{{ .source }}</textarea>
+          <textarea class="prettyprint" name="source" placeholder="Start here to write the page content." rows="25">{{ .source }}</textarea>
           {{ .body }}
         </div>
       </div>

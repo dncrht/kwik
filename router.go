@@ -67,6 +67,22 @@ func Router() *gin.Engine {
 		c.Redirect(http.StatusMovedPermanently, "/docs/" + page.Title)
 	})
 
+	// /:page/edit edit page action
+	authorized.POST("/docs/:page/preview", func(c *gin.Context) {
+		source := c.PostForm("source")
+		page := Page{
+			c.Param("page"),
+			source,
+			template.HTML(github_flavored_markdown.Markdown([]byte(source))),
+		}
+
+		c.HTML(http.StatusOK, "edit.html", gin.H{
+			"title":  page.Title,
+			"source": page.Source,
+			"body":   page.Body,
+		})
+	})
+
 	return router
 }
 
