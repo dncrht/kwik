@@ -61,6 +61,12 @@ func Router() *gin.Engine {
 		})
 	})
 
+	// /:page/edit edit page action
+	authorized.POST("/docs/:page/edit", func(c *gin.Context) {
+		page := loadPage(c)
+		c.Redirect(http.StatusMovedPermanently, "/docs/" + page.Title)
+	})
+
 	return router
 }
 
