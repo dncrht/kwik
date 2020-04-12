@@ -46,8 +46,7 @@ func Router() *gin.Engine {
 	authorized.GET("/docs/:page", func(c *gin.Context) {
 		page := loadPage(c)
 		c.HTML(http.StatusOK, "show.html", gin.H{
-			"title": page.Title,
-			"body":  page.Body,
+			"page": page,
 		})
 	})
 
@@ -55,9 +54,7 @@ func Router() *gin.Engine {
 	authorized.GET("/docs/:page/edit", func(c *gin.Context) {
 		page := loadPage(c)
 		c.HTML(http.StatusOK, "edit.html", gin.H{
-			"title":  page.Title,
-			"source": page.Source,
-			"body":   page.Body,
+			"page": page,
 		})
 	})
 
@@ -77,9 +74,7 @@ func Router() *gin.Engine {
 		}
 
 		c.HTML(http.StatusOK, "edit.html", gin.H{
-			"title":  page.Title,
-			"source": page.Source,
-			"body":   page.Body,
+			"page": page,
 		})
 	})
 

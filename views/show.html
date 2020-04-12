@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
-  <title>{{ .title }}</title>
+  <title>{{ .page.Title }}</title>
   <meta charset='UTF-8'>
   <link rel="stylesheet" media="all" href="/assets/application.css" />
 </head>
@@ -11,7 +11,7 @@
     <div class='navbar-inner'>
       <form action="/search" accept-charset="UTF-8" method="get">
         <div class='container-fluid'>
-          <a class="brand" href="/docs/{{ .title }}">{{ .title }}</a>
+          <a class="brand" href="/docs/{{ .page.Title }}">{{ .page.Title }}</a>
           <ul class='nav pull-right'>
             <li class='divider-vertical'></li>
             <li class='navbar-form'>
@@ -39,12 +39,12 @@
         </ul>
 
         <div class='breadcrumb'>
-          <a class="btn btn-primary" accesskey="e" title="Changes this page to edition mode" href="/docs/{{ .title }}/edit">Edit page</a>
+          <a class="btn btn-primary" accesskey="e" title="Changes this page to edition mode" href="/docs/{{ .page.Title }}/edit">Edit page</a>
         </div>
         <div class='toc breadcrumb js-toc'></div>
       </div>
       <div class='maincontent span9 pull-right js-maincontent'>
-        {{ .body }}
+        {{ .page.Body }}
       </div>
     </div>
   </div>
