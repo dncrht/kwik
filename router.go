@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/shurcooL/github_flavored_markdown"
 	"html/template"
 	"io/ioutil"
 	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
+	"github.com/shurcooL/github_flavored_markdown"
 )
 
 type Page struct {
@@ -62,9 +63,9 @@ func Router() *gin.Engine {
 	authorized.POST("/docs/:page/edit", func(c *gin.Context) {
 		title := c.Param("page")
 		source := c.PostForm("source")
-		ioutil.WriteFile("pages/" + title + ".mw.html.md", []byte(source), 0644)
+		ioutil.WriteFile("pages/"+title+".mw.html.md", []byte(source), 0644)
 
-		c.Redirect(http.StatusMovedPermanently, "/docs/" + title)
+		c.Redirect(http.StatusMovedPermanently, "/docs/"+title)
 	})
 
 	// /:page/edit edit page action
