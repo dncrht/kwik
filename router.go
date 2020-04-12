@@ -60,8 +60,11 @@ func Router() *gin.Engine {
 
 	// /:page/edit edit page action
 	authorized.POST("/docs/:page/edit", func(c *gin.Context) {
-		page := loadPage(c)
-		c.Redirect(http.StatusMovedPermanently, "/docs/" + page.Title)
+		title := c.Param("page")
+		source := c.PostForm("source")
+		ioutil.WriteFile("pages/" + title + ".mw.html.md", []byte(source), 0644)
+
+		c.Redirect(http.StatusMovedPermanently, "/docs/" + title)
 	})
 
 	// /:page/edit edit page action
