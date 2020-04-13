@@ -3,6 +3,8 @@ package main
 import (
 	"html/template"
 	"io/ioutil"
+	"os/exec"
+	"strings"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/shurcooL/github_flavored_markdown"
@@ -27,13 +29,48 @@ func Router() *fasthttprouter.Router {
 		ctx.Redirect("/docs/"+title, fasthttp.StatusMovedPermanently)
 	})
 
+	// /search find pages
+	router.GET("/search", func(ctx *fasthttp.RequestCtx) {
+		term := string(ctx.FormValue("term"))
+		files, _ := ioutil.ReadDir("pages/")
+		var pages []string
+		for _, f := range files {
+			title := f.Name()
+			if strings.Contains(strings.ToLower(title), strings.ToLower(term)) {
+				pages = append(pages, title)
+			}
+		}
+
+		var content = map[string]string{}
+		results, _ := exec.Command("bash", "-c", "cd /Users/dani/Sites/kwik/pages; grep '"+term+"' *").Output() // TODO case insensitive search
+		for _, result := range strings.Split(string(results), "\n") {
+			matches := strings.Split(result, ":")
+			page := matches[0]
+			if page == "" {
+				continue
+			}
+			line := strings.Join(matches[1:], "\n")
+			content[page] += strings.TrimSpace(line) + "\n"
+		}
+
+		page := Page{"Main page", "", ""}
+		t := template.Must(template.ParseFiles("views/layout.html", "views/search.html"))
+		t.Execute(ctx, H{
+			"page":    page,
+			"pages":   pages,   // pages with search term in name
+			"content": content, // pages with search term in content
+			"term":    term,
+		})
+		ctx.SetContentType("text/html")
+	})
+
 	// /docs display all pages
 	router.GET("/docs", func(ctx *fasthttp.RequestCtx) {
 		files, _ := ioutil.ReadDir("pages/")
 		var pages []string
 		for _, f := range files {
 			title := f.Name()
-			if title[0] != '.' || title != "Main_page" {
+			if title[0] != '.' && title != "Main_page" {
 				pages = append(pages, title)
 			}
 		}
@@ -93,7 +130,7 @@ func Router() *fasthttprouter.Router {
 		page := Page{
 			title,
 			string(source),
-			template.HTML(github_flavored_markdown.Markdown([]byte(source))),
+			template.HTML(github_flavored_markdown.Markdown(source)),
 		}
 
 		t := template.Must(template.ParseFiles("views/layout.html", "views/edit.html"))

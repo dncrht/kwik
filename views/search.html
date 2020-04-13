@@ -1,0 +1,33 @@
+{{ template "layout.html" . }}
+
+{{ define "content" }}
+    <div class='row-fluid'>
+      <div class='span3 js-sidepanel'>
+        <ul class='breadcrumb'>
+          <li>
+            <a accesskey="q" title="Back to main page of this wiki" href="/">« Main page</a>
+          </li>
+        </ul>
+      </div>
+      <div class='maincontent span9 pull-right js-maincontent'>
+        <h2>Search results</h2>
+
+        <h3>Page title matches</h3>
+
+        <ul>
+          {{ range .pages }}
+          <li><a href="/docs/{{ . }}">{{ . }}</a></li>
+          {{ end }}
+        </ul>
+
+        <h3>Page content matches</h3>
+
+        <ul>
+          {{ range $page, $matches := .content }}
+          <li><a href="/docs/{{ $page }}">{{ $page }}</a></li>
+          <pre>{{ $matches }}</pre>
+          {{ end }}
+        </ul>
+      </div>
+    </div>
+{{ end }}
