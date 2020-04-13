@@ -2,3 +2,4 @@ bin/
 tmp/
 pages
 *.orig
+assets/jquery-nestedToc.js
