@@ -1,3 +1,5 @@
+github.com/AubSs/fasthttplogger v0.0.0-20170531123222-7dab642e7dab h1:5lYZOhbzrWG4qvDKK53zQJpEEWPL0ThhkQ2mShrJVNI=
+github.com/AubSs/fasthttplogger v0.0.0-20170531123222-7dab642e7dab/go.mod h1:mMNQ8Id0u+AYt2LAB+PMq1IgaWcM02mK5Te7pZYhOCs=
 github.com/buaazp/fasthttprouter v0.1.1 h1:4oAnN0C3xZjylvZJdP35cxfclyn4TYkW6Y+DSvS+h8Q=
 github.com/buaazp/fasthttprouter v0.1.1/go.mod h1:h/Ap5oRVLeItGKTVBb+heQPks+HdIUtGmI4H5WCYijM=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

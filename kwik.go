@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/AubSs/fasthttplogger"
 	"github.com/valyala/fasthttp"
 	"os"
 )
@@ -11,5 +12,10 @@ func main() {
 		port = "5000"
 	}
 
-	fasthttp.ListenAndServe(":"+port, Router().Handler)
+	s := &fasthttp.Server{
+		Handler: fasthttplogger.CombinedColored(Router().Handler),
+		Name: "FastHttpLogger",
+	}
+
+	s.ListenAndServe(":"+port)
 }

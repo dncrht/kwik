@@ -3,6 +3,7 @@ module github.com/dncrht/kwik
 go 1.14
 
 require (
+	github.com/AubSs/fasthttplogger v0.0.0-20170531123222-7dab642e7dab
 	github.com/buaazp/fasthttprouter v0.1.1
 	github.com/gin-gonic/gin v1.6.2
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
