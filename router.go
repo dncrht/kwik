@@ -15,6 +15,8 @@ type Page struct {
 	Body   template.HTML
 }
 
+type H map[string]interface{} // a standard hash map
+
 func Router() *fasthttprouter.Router {
 	router := fasthttprouter.New()
 	router.ServeFiles("/assets/*filepath", "assets")
@@ -30,7 +32,7 @@ func Router() *fasthttprouter.Router {
 		title := pageTitle(ctx)
 		page := loadPage(title)
 		t := template.Must(template.ParseFiles("views/layout.html", "views/show.html"))
-		t.Execute(ctx, map[string]interface{}{
+		t.Execute(ctx, H{
 			"page": page,
 		})
 		ctx.SetContentType("text/html")
@@ -41,7 +43,7 @@ func Router() *fasthttprouter.Router {
 		title := pageTitle(ctx)
 		page := loadPage(title)
 		t := template.Must(template.ParseFiles("views/layout.html", "views/edit.html"))
-		t.Execute(ctx, map[string]interface{}{
+		t.Execute(ctx, H{
 			"page": page,
 		})
 		ctx.SetContentType("text/html")
@@ -67,7 +69,7 @@ func Router() *fasthttprouter.Router {
 		}
 
 		t := template.Must(template.ParseFiles("views/layout.html", "views/edit.html"))
-		t.Execute(ctx, map[string]interface{}{
+		t.Execute(ctx, H{
 			"page": page,
 		})
 		ctx.SetContentType("text/html")

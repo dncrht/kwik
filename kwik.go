@@ -14,8 +14,8 @@ func main() {
 
 	s := &fasthttp.Server{
 		Handler: fasthttplogger.CombinedColored(Router().Handler),
-		Name: "FastHttpLogger",
+		Name:    "FastHttpLogger",
 	}
 
-	s.ListenAndServe(":"+port)
+	s.ListenAndServe(":" + port)
 }
