@@ -1,0 +1,22 @@
+{{ template "layout.html" . }}
+
+{{ define "content" }}
+    <div class='row-fluid'>
+      <div class='span3 js-sidepanel'>
+        <ul class='breadcrumb'>
+          <li>
+            <a accesskey="q" title="Back to main page of this wiki" href="/">« Main page</a>
+          </li>
+        </ul>
+      </div>
+      <div class='maincontent span9 pull-right js-maincontent'>
+        <h2>All pages</h2>
+
+        <ul>
+          {{ range .pages }}
+          <li><a href="/docs/{{ . }}">{{ . }}</a></li>
+          {{ end }}
+        </ul>
+      </div>
+    </div>
+{{ end }}

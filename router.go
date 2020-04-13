@@ -27,9 +27,37 @@ func Router() *fasthttprouter.Router {
 		ctx.Redirect("/docs/"+title, fasthttp.StatusMovedPermanently)
 	})
 
-	// /:page display page
-	router.GET("/docs/:page", func(ctx *fasthttp.RequestCtx) {
+	// /docs display all pages
+	router.GET("/docs", func(ctx *fasthttp.RequestCtx) {
+		files, _ := ioutil.ReadDir("pages/")
+		var pages []string
+		for _, f := range files {
+			title := f.Name()
+			if title[0] != '.' || title != "Main_page" {
+				pages = append(pages, title)
+			}
+		}
+
+		page := Page{
+			"All",
+			"",
+			"",
+		}
+		t := template.Must(template.ParseFiles("views/layout.html", "views/show_all.html"))
+		t.Execute(ctx, H{
+			"page":  page,
+			"pages": pages,
+		})
+		ctx.SetContentType("text/html")
+	})
+
+	// /:title display page
+	router.GET("/docs/:title", func(ctx *fasthttp.RequestCtx) {
 		title := pageTitle(ctx)
+		if title == "All" {
+			ctx.Redirect("/docs", fasthttp.StatusMovedPermanently)
+			return
+		}
 		page := loadPage(title)
 		t := template.Must(template.ParseFiles("views/layout.html", "views/show.html"))
 		t.Execute(ctx, H{
@@ -38,8 +66,8 @@ func Router() *fasthttprouter.Router {
 		ctx.SetContentType("text/html")
 	})
 
-	// /:page/edit edit page
-	router.GET("/docs/:page/edit", func(ctx *fasthttp.RequestCtx) {
+	// /:title/edit edit page
+	router.GET("/docs/:title/edit", func(ctx *fasthttp.RequestCtx) {
 		title := pageTitle(ctx)
 		page := loadPage(title)
 		t := template.Must(template.ParseFiles("views/layout.html", "views/edit.html"))
@@ -49,8 +77,8 @@ func Router() *fasthttprouter.Router {
 		ctx.SetContentType("text/html")
 	})
 
-	// /:page/edit edit page action
-	router.POST("/docs/:page/edit", func(ctx *fasthttp.RequestCtx) {
+	// /:title/edit edit page action
+	router.POST("/docs/:title/edit", func(ctx *fasthttp.RequestCtx) {
 		title := pageTitle(ctx)
 		source := ctx.FormValue("source")
 		ioutil.WriteFile("pages/"+title+".mw.html.md", []byte(source), 0644)
@@ -58,8 +86,8 @@ func Router() *fasthttprouter.Router {
 		ctx.Redirect("/docs/"+title, fasthttp.StatusMovedPermanently)
 	})
 
-	// /:page/edit edit page action
-	router.POST("/docs/:page/preview", func(ctx *fasthttp.RequestCtx) {
+	// /:title/edit edit page action
+	router.POST("/docs/:title/preview", func(ctx *fasthttp.RequestCtx) {
 		title := pageTitle(ctx)
 		source := ctx.FormValue("source")
 		page := Page{
@@ -93,7 +121,7 @@ func loadPage(title string) Page {
 }
 
 func pageTitle(ctx *fasthttp.RequestCtx) string {
-	title, _ := ctx.UserValue("page").(string)
+	title, _ := ctx.UserValue("title").(string)
 	if title == "" {
 		title = "Main_page"
 	}
