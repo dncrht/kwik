@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"io/ioutil"
 
@@ -22,12 +21,13 @@ func Router() *fasthttprouter.Router {
 
 	// / root path
 	router.GET("/", func(ctx *fasthttp.RequestCtx) {
-		fmt.Fprint(ctx, "root")
+		title := pageTitle(ctx)
+		ctx.Redirect("/docs/"+title, fasthttp.StatusMovedPermanently)
 	})
 
 	// /:page display page
 	router.GET("/docs/:page", func(ctx *fasthttp.RequestCtx) {
-		title, _ := ctx.UserValue("page").(string)
+		title := pageTitle(ctx)
 		page := loadPage(title)
 		t := template.Must(template.ParseFiles("views/layout.html", "views/show.html"))
 		t.Execute(ctx, map[string]interface{}{
@@ -38,7 +38,7 @@ func Router() *fasthttprouter.Router {
 
 	// /:page/edit edit page
 	router.GET("/docs/:page/edit", func(ctx *fasthttp.RequestCtx) {
-		title, _ := ctx.UserValue("page").(string)
+		title := pageTitle(ctx)
 		page := loadPage(title)
 		t := template.Must(template.ParseFiles("views/layout.html", "views/edit.html"))
 		t.Execute(ctx, map[string]interface{}{
@@ -49,7 +49,7 @@ func Router() *fasthttprouter.Router {
 
 	// /:page/edit edit page action
 	router.POST("/docs/:page/edit", func(ctx *fasthttp.RequestCtx) {
-		title, _ := ctx.UserValue("page").(string)
+		title := pageTitle(ctx)
 		source := ctx.FormValue("source")
 		ioutil.WriteFile("pages/"+title+".mw.html.md", []byte(source), 0644)
 
@@ -58,7 +58,7 @@ func Router() *fasthttprouter.Router {
 
 	// /:page/edit edit page action
 	router.POST("/docs/:page/preview", func(ctx *fasthttp.RequestCtx) {
-		title, _ := ctx.UserValue("page").(string)
+		title := pageTitle(ctx)
 		source := ctx.FormValue("source")
 		page := Page{
 			title,
@@ -88,4 +88,12 @@ func loadPage(title string) Page {
 		template.HTML(github_flavored_markdown.Markdown(source)),
 	}
 	return page
+}
+
+func pageTitle(ctx *fasthttp.RequestCtx) string {
+	title, _ := ctx.UserValue("page").(string)
+	if title == "" {
+		title = "Main_page"
+	}
+	return title
 }
