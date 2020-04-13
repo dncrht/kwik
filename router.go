@@ -25,8 +25,7 @@ func Router() *fasthttprouter.Router {
 
 	// / root path
 	router.GET("/", func(ctx *fasthttp.RequestCtx) {
-		title := pageTitle(ctx)
-		ctx.Redirect("/docs/"+title, fasthttp.StatusMovedPermanently)
+		ctx.Redirect("/docs", fasthttp.StatusMovedPermanently)
 	})
 
 	// /search find pages
@@ -60,6 +59,7 @@ func Router() *fasthttprouter.Router {
 			"pages":   pages,   // pages with search term in name
 			"content": content, // pages with search term in content
 			"term":    term,
+			"title":   "Main page",
 		})
 		ctx.SetContentType("text/html")
 	})
@@ -84,11 +84,12 @@ func Router() *fasthttprouter.Router {
 		t.Execute(ctx, H{
 			"page":  page,
 			"pages": pages,
+			"title": "All",
 		})
 		ctx.SetContentType("text/html")
 	})
 
-	// /:title display page
+	// /docs/:title display page
 	router.GET("/docs/:title", func(ctx *fasthttp.RequestCtx) {
 		title := pageTitle(ctx)
 		if title == "All" {
@@ -98,23 +99,25 @@ func Router() *fasthttprouter.Router {
 		page := loadPage(title)
 		t := template.Must(template.ParseFiles("views/layout.html", "views/show.html"))
 		t.Execute(ctx, H{
-			"page": page,
+			"page":  page,
+			"title": strings.ReplaceAll(title, "_", " "),
 		})
 		ctx.SetContentType("text/html")
 	})
 
-	// /:title/edit edit page
+	// /docs/:title/edit edit page
 	router.GET("/docs/:title/edit", func(ctx *fasthttp.RequestCtx) {
 		title := pageTitle(ctx)
 		page := loadPage(title)
 		t := template.Must(template.ParseFiles("views/layout.html", "views/edit.html"))
 		t.Execute(ctx, H{
-			"page": page,
+			"page":  page,
+			"title": strings.ReplaceAll(title, "_", " "),
 		})
 		ctx.SetContentType("text/html")
 	})
 
-	// /:title/edit edit page action
+	// /docs/:title/edit edit page action
 	router.POST("/docs/:title/edit", func(ctx *fasthttp.RequestCtx) {
 		title := pageTitle(ctx)
 		source := ctx.FormValue("source")
@@ -123,7 +126,7 @@ func Router() *fasthttprouter.Router {
 		ctx.Redirect("/docs/"+title, fasthttp.StatusMovedPermanently)
 	})
 
-	// /:title/edit edit page action
+	// /docs/:title/preview preview page action
 	router.POST("/docs/:title/preview", func(ctx *fasthttp.RequestCtx) {
 		title := pageTitle(ctx)
 		source := ctx.FormValue("source")
@@ -135,7 +138,8 @@ func Router() *fasthttprouter.Router {
 
 		t := template.Must(template.ParseFiles("views/layout.html", "views/edit.html"))
 		t.Execute(ctx, H{
-			"page": page,
+			"page":  page,
+			"title": strings.ReplaceAll(title, "_", " "),
 		})
 		ctx.SetContentType("text/html")
 	})

@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
-  <title>{{ .page.Title }}</title>
+  <title>Kwik – {{ .title }}</title>
   <meta charset='UTF-8'>
   <link rel="stylesheet" media="all" href="/assets/application.css" />
 </head>
@@ -11,7 +11,7 @@
     <div class='navbar-inner'>
       <form action="/search" accept-charset="UTF-8" method="get">
         <div class='container-fluid'>
-          <a class="brand" href="/docs/{{ .page.Title }}">{{ .page.Title }}</a>
+          <a class="brand" href="/docs/{{ .page.Title }}">{{ .title }}</a>
           <ul class='nav pull-right'>
             <li class='divider-vertical'></li>
             <li class='navbar-form'>
