@@ -3,6 +3,9 @@
 echo 'Compiling binary'
 go build -o bin/kwik
 
+echo 'Preparing storage'
+mkdir pages &> /dev/null
+
 echo 'Preparing launch script'
 sed "s|\$HOME|$HOME|g" com.github.dncrht.kwik.plist.TEMPLATE | sed "s|\MY_DIR|$(pwd)|g" > com.github.dncrht.kwik.plist
 
