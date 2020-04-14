@@ -41,7 +41,7 @@ func Router() *fasthttprouter.Router {
 		}
 
 		var content = map[string]string{}
-		results, _ := exec.Command("bash", "-c", "cd /Users/dani/Sites/kwik/pages; grep '"+term+"' *").Output() // TODO case insensitive search
+		results, _ := exec.Command("bash", "-c", "cd pages; grep '"+term+"' *").Output() // TODO case insensitive search
 		for _, result := range strings.Split(string(results), "\n") {
 			matches := strings.Split(result, ":")
 			page := matches[0]
