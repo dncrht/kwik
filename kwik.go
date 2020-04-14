@@ -9,7 +9,7 @@ import (
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "5000"
+		port = "2005"
 	}
 
 	s := &fasthttp.Server{
