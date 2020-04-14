@@ -11,6 +11,8 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+const EmptyPageText = "Page does not exist. Click on the Go button above to create it."
+
 type Page struct {
 	Title  string
 	Source string
@@ -25,12 +27,26 @@ func Router() *fasthttprouter.Router {
 
 	// / root path
 	router.GET("/", func(ctx *fasthttp.RequestCtx) {
-		ctx.Redirect("/docs", fasthttp.StatusMovedPermanently)
+		ctx.Redirect("/docs/Main_page", fasthttp.StatusMovedPermanently)
+	})
+
+	// /edit launch edit mode from top bar
+	router.GET("/edit", func(ctx *fasthttp.RequestCtx) {
+		term := string(ctx.FormValue("term"))
+		redirection := "/docs/"+term+"/edit"
+		if term == "" {
+			redirection = "/docs"
+		}
+		ctx.Redirect(redirection, fasthttp.StatusMovedPermanently)
 	})
 
 	// /search find pages
 	router.GET("/search", func(ctx *fasthttp.RequestCtx) {
 		term := string(ctx.FormValue("term"))
+		if term == "" {
+			ctx.Redirect("/docs", fasthttp.StatusMovedPermanently)
+			return
+		}
 		files, _ := ioutil.ReadDir("pages/")
 		var pages []string
 		for _, f := range files {
@@ -97,10 +113,15 @@ func Router() *fasthttprouter.Router {
 			return
 		}
 		page := loadPage(title)
+		term := ""
+		if page.Source == EmptyPageText {
+			term = title
+		}
 		t := template.Must(template.ParseFiles("views/layout.html", "views/show.html"))
 		t.Execute(ctx, H{
 			"page":  page,
 			"title": strings.ReplaceAll(title, "_", " "),
+			"term":  term,
 		})
 		ctx.SetContentType("text/html")
 	})
@@ -148,9 +169,9 @@ func Router() *fasthttprouter.Router {
 }
 
 func loadPage(title string) Page {
-	source, err := ioutil.ReadFile("pages/" + title + ".mw.html.md")
+	source, err := ioutil.ReadFile("pages/" + title)
 	if err != nil {
-		source = []byte("not found")
+		source = []byte(EmptyPageText)
 	}
 
 	page := Page{

@@ -17,6 +17,8 @@
         <ul>
           {{ range .pages }}
           <li><a href="/docs/{{ . }}">{{ . }}</a></li>
+          {{ else }}
+          Nothing found… click Go on the top bar to create a page named <i>{{ .term }}</i>.
           {{ end }}
         </ul>
 
