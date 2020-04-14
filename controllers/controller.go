@@ -129,7 +129,7 @@ func Edit(ctx *fasthttp.RequestCtx) {
 func EditAction(ctx *fasthttp.RequestCtx) {
 	title := pageTitle(ctx)
 	source := ctx.FormValue("source")
-	ioutil.WriteFile("pages/"+title+".mw.html.md", []byte(source), 0644)
+	ioutil.WriteFile("pages/"+title, []byte(source), 0644)
 
 	redirect(ctx, "/docs/"+title)
 }
