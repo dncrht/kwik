@@ -69,15 +69,13 @@ func Router() *fasthttprouter.Router {
 		}
 
 		page := Page{"Main page", "", ""}
-		t := template.Must(template.ParseFiles("views/layout.html", "views/search.html"))
-		t.Execute(ctx, H{
+		render(ctx, "search", H{
 			"page":    page,
 			"pages":   pages,   // pages with search term in name
 			"content": content, // pages with search term in content
 			"term":    term,
 			"title":   "Main page",
 		})
-		ctx.SetContentType("text/html")
 	})
 
 	// /docs display all pages
@@ -96,13 +94,11 @@ func Router() *fasthttprouter.Router {
 			"",
 			"",
 		}
-		t := template.Must(template.ParseFiles("views/layout.html", "views/show_all.html"))
-		t.Execute(ctx, H{
+		render(ctx, "show_all", H{
 			"page":  page,
 			"pages": pages,
 			"title": "All",
 		})
-		ctx.SetContentType("text/html")
 	})
 
 	// /docs/:title display page
@@ -117,25 +113,21 @@ func Router() *fasthttprouter.Router {
 		if page.Source == EmptyPageText {
 			term = title
 		}
-		t := template.Must(template.ParseFiles("views/layout.html", "views/show.html"))
-		t.Execute(ctx, H{
+		render(ctx, "show", H{
 			"page":  page,
 			"title": strings.ReplaceAll(title, "_", " "),
 			"term":  term,
 		})
-		ctx.SetContentType("text/html")
 	})
 
 	// /docs/:title/edit edit page
 	router.GET("/docs/:title/edit", func(ctx *fasthttp.RequestCtx) {
 		title := pageTitle(ctx)
 		page := loadPage(title)
-		t := template.Must(template.ParseFiles("views/layout.html", "views/edit.html"))
-		t.Execute(ctx, H{
+		render(ctx, "edit", H{
 			"page":  page,
 			"title": strings.ReplaceAll(title, "_", " "),
 		})
-		ctx.SetContentType("text/html")
 	})
 
 	// /docs/:title/edit edit page action
@@ -157,15 +149,19 @@ func Router() *fasthttprouter.Router {
 			template.HTML(github_flavored_markdown.Markdown(source)),
 		}
 
-		t := template.Must(template.ParseFiles("views/layout.html", "views/edit.html"))
-		t.Execute(ctx, H{
+		render(ctx, "edit", H{
 			"page":  page,
 			"title": strings.ReplaceAll(title, "_", " "),
 		})
-		ctx.SetContentType("text/html")
 	})
 
 	return router
+}
+
+func render(ctx *fasthttp.RequestCtx, view string, attributes H) {
+	ctx.SetContentType("text/html")
+	t := template.Must(template.ParseFiles("views/layout.html", "views/"+view+".html"))
+	t.Execute(ctx, attributes)
 }
 
 func loadPage(title string) Page {
