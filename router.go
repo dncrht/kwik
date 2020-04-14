@@ -27,24 +27,24 @@ func Router() *fasthttprouter.Router {
 
 	// / root path
 	router.GET("/", func(ctx *fasthttp.RequestCtx) {
-		ctx.Redirect("/docs/Main_page", fasthttp.StatusMovedPermanently)
+		redirect(ctx, "/docs/Main_page")
 	})
 
 	// /edit launch edit mode from top bar
 	router.GET("/edit", func(ctx *fasthttp.RequestCtx) {
 		term := string(ctx.FormValue("term"))
-		redirection := "/docs/"+term+"/edit"
+		url := "/docs/" + term + "/edit"
 		if term == "" {
-			redirection = "/docs"
+			url = "/docs"
 		}
-		ctx.Redirect(redirection, fasthttp.StatusMovedPermanently)
+		redirect(ctx, url)
 	})
 
 	// /search find pages
 	router.GET("/search", func(ctx *fasthttp.RequestCtx) {
 		term := string(ctx.FormValue("term"))
 		if term == "" {
-			ctx.Redirect("/docs", fasthttp.StatusMovedPermanently)
+			redirect(ctx, "/docs")
 			return
 		}
 		files, _ := ioutil.ReadDir("pages/")
@@ -105,7 +105,7 @@ func Router() *fasthttprouter.Router {
 	router.GET("/docs/:title", func(ctx *fasthttp.RequestCtx) {
 		title := pageTitle(ctx)
 		if title == "All" {
-			ctx.Redirect("/docs", fasthttp.StatusMovedPermanently)
+			redirect(ctx, "/docs")
 			return
 		}
 		page := loadPage(title)
@@ -136,7 +136,7 @@ func Router() *fasthttprouter.Router {
 		source := ctx.FormValue("source")
 		ioutil.WriteFile("pages/"+title+".mw.html.md", []byte(source), 0644)
 
-		ctx.Redirect("/docs/"+title, fasthttp.StatusMovedPermanently)
+		redirect(ctx, "/docs/"+title)
 	})
 
 	// /docs/:title/preview preview page action
@@ -156,6 +156,10 @@ func Router() *fasthttprouter.Router {
 	})
 
 	return router
+}
+
+func redirect(ctx *fasthttp.RequestCtx, url string) {
+	ctx.Redirect(url, fasthttp.StatusMovedPermanently)
 }
 
 func render(ctx *fasthttp.RequestCtx, view string, attributes H) {
