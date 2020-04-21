@@ -99,10 +99,15 @@ func ShowAll(ctx *fasthttp.RequestCtx) {
 // /docs/:title display page
 func Show(ctx *fasthttp.RequestCtx) {
 	title := pageTitle(ctx)
+	if isImage(title) {
+		fasthttp.ServeFile(ctx, "pages/" + title)
+		return
+	}
 	if title == "All" {
 		redirect(ctx, "/docs")
 		return
 	}
+
 	page := loadPage(title)
 	term := ""
 	if page.Source == EmptyPageText {
@@ -180,4 +185,8 @@ func pageTitle(ctx *fasthttp.RequestCtx) string {
 		title = "Main_page"
 	}
 	return title
+}
+
+func isImage(filename string) bool {
+	return strings.HasSuffix(filename, ".gif") || strings.HasSuffix(filename, ".jpg") ||strings.HasSuffix(filename, ".png")
 }
