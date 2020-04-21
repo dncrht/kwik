@@ -100,7 +100,7 @@ func ShowAll(ctx *fasthttp.RequestCtx) {
 func Show(ctx *fasthttp.RequestCtx) {
 	title := pageTitle(ctx)
 	if isImage(title) {
-		fasthttp.ServeFile(ctx, "pages/" + title)
+		fasthttp.ServeFile(ctx, "pages/"+title)
 		return
 	}
 	if title == "All" {
@@ -123,6 +123,11 @@ func Show(ctx *fasthttp.RequestCtx) {
 // /docs/:title/edit edit page
 func Edit(ctx *fasthttp.RequestCtx) {
 	title := pageTitle(ctx)
+	if isImage(title) {
+		redirect(ctx, "/docs/Main_page")
+		return
+	}
+
 	page := loadPage(title)
 	render(ctx, "edit", H{
 		"page":  page,
@@ -133,6 +138,11 @@ func Edit(ctx *fasthttp.RequestCtx) {
 // /docs/:title/edit edit page action
 func EditAction(ctx *fasthttp.RequestCtx) {
 	title := pageTitle(ctx)
+	if isImage(title) {
+		redirect(ctx, "/docs/Main_page")
+		return
+	}
+
 	source := ctx.FormValue("source")
 	ioutil.WriteFile("pages/"+title, []byte(source), 0644)
 
@@ -142,6 +152,11 @@ func EditAction(ctx *fasthttp.RequestCtx) {
 // /docs/:title/preview preview page action
 func PreviewAction(ctx *fasthttp.RequestCtx) {
 	title := pageTitle(ctx)
+	if isImage(title) {
+		redirect(ctx, "/docs/Main_page")
+		return
+	}
+
 	source := ctx.FormValue("source")
 	page := Page{
 		title,
@@ -188,5 +203,5 @@ func pageTitle(ctx *fasthttp.RequestCtx) string {
 }
 
 func isImage(filename string) bool {
-	return strings.HasSuffix(filename, ".gif") || strings.HasSuffix(filename, ".jpg") ||strings.HasSuffix(filename, ".png")
+	return strings.HasSuffix(filename, ".gif") || strings.HasSuffix(filename, ".jpg") || strings.HasSuffix(filename, ".png")
 }
